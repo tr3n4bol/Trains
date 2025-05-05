@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Результаты поиска билетов</title>
+    <link rel="stylesheet" th:href="@{/css/header.css}">
+    <link rel="stylesheet" th:href="@{/css/results.css}">
+</head>
+<body>
+<header class="site-header">
+    <div class="header-container">
+        <div class="logo-container">
+            <a href="/" class="logo-link">
+                <span class="logo-text">ЖДР</span>
+            </a>
+        </div>
+
+        <nav class="main-nav">
+            <ul class="nav-list">
+                <li class="nav-item"><a href="/tickets" class="nav-link">Билеты</a></li>
+                <li class="nav-item"><a href="/schedule" class="nav-link">Расписание</a></li>
+                <li class="nav-item"><a href="/stations" class="nav-link">Станции</a></li>
+                <li class="nav-item"><a href="/info" class="nav-link">Информация</a></li>
+            </ul>
+        </nav>
+
+        <div class="user-actions">
+            <div sec:authorize="!isAuthenticated()">
+                <a href="/login" class="auth-button">Войти</a>
+                <a href="/register" class="auth-button register-button">Регистрация</a>
+            </div>
+
+            <div sec:authorize="isAuthenticated()">
+                <a href="/profile" class="auth-button">
+                    <span sec:authentication="name"></span>
+                </a>
+                <form th:action="@{/logout}" method="post" style="display: inline-block;">
+                    <button type="submit" class="auth-button logout-button">Выйти</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+    <div class="search-params">
+        <h2>Результаты поиска</h2>
+        <div class="route-info">
+            <div class="stations">
+                <span th:text="${fromCity} + ' → ' + ${toCity}"></span>
+            </div>
+            <div class="dates">
+                <span th:text="${#dates.format(departureDate, 'dd.MM.yyyy')}"></span>
+                <span th:if="${returnDate}" th:text="' — ' + ${#dates.format(returnDate, 'dd.MM.yyyy')}"></span>
+            </div>
+        </div>
+        <a href="/" class="auth-button">Новый поиск</a>
+    </div>
+
+    <div class="tickets-list">
+        <!-- Пример билета (в реальном приложении будет th:each) -->
+        <div class="ticket-item">
+            <div class="ticket-header">
+                <div class="train-info">Поезд №123Ф «Стриж»</div>
+                <div class="price">2 500 ₽</div>
+            </div>
+
+            <div class="ticket-details">
+                <div class="time-info">
+                    <div class="departure">10:30</div>
+                    <div class="station" th:text="${fromStation}"></div>
+                </div>
+
+                <div class="time-info">
+                    <div class="duration">4 ч 20 мин</div>
+                    <div class="route-line"></div>
+                </div>
+
+                <div class="time-info">
+                    <div class="arrival">14:50</div>
+                    <div class="station" th:text="${toStation}"></div>
+                </div>
+            </div>
+
+            <div class="ticket-footer">
+                <div class="places-info">Осталось 12 мест</div>
+                <button class="book-btn">Забронировать</button>
+            </div>
+        </div>
+
+        <!-- Еще билеты -->
+        <div class="ticket-item">
+            <!-- аналогичная структура -->
+        </div>
+    </div>
+</main>
+</body>
+</html>
