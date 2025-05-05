@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -23,41 +24,52 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/",
                                 "/home",
+                                "/search/**",
+                                "/schedule/**",
+                                "/stations/**",
+                                "/info/**",
+                                "/login",
                                 "/register",
-                                "/static/css/**",
-                                "/static/images/**",
-                                "/static/favicon.ico"
+                                "/static/**",
+                                "/favicon.ico",
+                                "/css/**",
+                                "/js/**",
+                                "/images/**"
                         ).permitAll()
-//                        .requestMatchers(
-//                                "/users",
-//                                "/user-history",
-//                                "/add-exchange-rate").hasAnyRole("ADMIN")
-                        .anyRequest().authenticated()
+
+                        .requestMatchers(
+                                "/checkout/**",
+                                "/orders/**",
+                                "/profile/**",
+                                "/payment/**"
+                        ).authenticated()
+
+                        .anyRequest().permitAll()
                 )
                 .formLogin(form -> form
-                        .loginPage("/")
-                        .defaultSuccessUrl("/hellopage")
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/home", true)
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/")
+                        .logoutSuccessUrl("/home")
                         .permitAll()
+                )
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 );
         return http.build();
     }
 
     @Bean
     public UserDetailsService userDetailsService(UserRepository userRepository) {
-        return username -> {
-            User user = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-
-            return org.springframework.security.core.userdetails.User
-                    .withUsername(user.getUsername())
-                    .password(user.getPassword())
-                    .roles(user.getRole())
-                    .build();
-        };
+        return username -> userRepository.findByUsername(username)
+                .map(user -> org.springframework.security.core.userdetails.User
+                        .withUsername(user.getUsername())
+                        .password(user.getPassword())
+                        .roles(user.getRole())
+                        .build())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
     @Bean

@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
-    <link rel="stylesheet" href="static/css/stylesheet.css">
+    <link rel="stylesheet" th:href="@{/css/stylesheet.css}">
 </head>
 <body>
 <div class="login-container">
     <h1>Login</h1>
-    <form th:action="@{/}" method="post">
+    <form method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required><br><br>
 

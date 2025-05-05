@@ -30,7 +30,7 @@ public class RegistrationController {
     @PostMapping("/register")
     public String registerUser(@ModelAttribute("user") User user, Model model) {
         if (userService.registerUser(user)) {
-            return "redirect:/";
+            return "redirect:/register";
         } else {
             model.addAttribute("error", "Пользователь уже существует");
             return "register";
