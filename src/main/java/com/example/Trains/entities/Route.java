@@ -2,9 +2,12 @@ package com.example.Trains.entities;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
-@Table(name = "stations")
-public class Station {
+@Table(name = "routes")
+public class Route {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -13,11 +16,8 @@ public class Station {
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 
-    @Column(name = "code", unique = true, length = 10)
-    private String code;
-
-    @Column(name = "city", nullable = false, length = 50)
-    private String city;
+    @OneToMany(mappedBy = "route", cascade = CascadeType.ALL)
+    private List<RouteStation> stations = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -35,19 +35,12 @@ public class Station {
         this.name = name;
     }
 
-    public String getCode() {
-        return code;
+    public List<RouteStation> getStations() {
+        return stations;
     }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
+    public void setStations(List<RouteStation> stations) {
+        this.stations = stations;
     }
 }
+

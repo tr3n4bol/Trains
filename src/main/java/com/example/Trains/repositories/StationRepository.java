@@ -14,3 +14,4 @@ public interface StationRepository extends JpaRepository<Station, Long> {
            "ORDER BY s.city, s.name")
     List<Station> searchStations(@Param("query") String query);
 }
+
